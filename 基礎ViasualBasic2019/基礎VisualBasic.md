@@ -1,12 +1,33 @@
 # 基礎 Visual Studio Code まとめ
+
+
+<!-- vscode-markdown-toc -->
+* 1. [Part1 はじめての VisualBasic プログラミング](#Part1VisualBasic)
+* 2. [Part2 Visual Basicの基礎を身に付ける](#Part2VisualBasic)
+	* 2.1. [<u>Chapter3 数値や文字列を扱う</u>](#uChapter3u)
+	* 2.2. [<u>Chapter4 条件によって処理を変える</u>](#uChapter4u)
+	* 2.3. [<u>Chapter5 処理を繰り返す</u>](#uChapter5u)
+	* 2.4. [<u>Chapter6 配列を利用する</u>](#uChapter6u)
+	* 2.5. [<u>Chapter7 プロシージャを使ってコードをまとめる</u>](#uChapter7u)
+	* 2.6. [<u>Chapter8 クラスを利用する</u>](#uChapter8u)
+* 3. [Part3 本格的なプログラミングにチャレンジする](#Part3)
+
+<!-- vscode-markdown-toc-config
+	numbering=true
+	autoSave=true
+	/vscode-markdown-toc-config -->
+<!-- /vscode-markdown-toc -->
+
+
+
 ---
-## Part1 はじめての VisualBasic プログラミング
+##  1. <a name='Part1VisualBasic'></a>Part1 はじめての VisualBasic プログラミング
 
 略
 
 ---
-## Part2 Visual Basicの基礎を身に付ける
-### <u>Chapter3 数値や文字列を扱う</u>
+##  2. <a name='Part2VisualBasic'></a>Part2 Visual Basicの基礎を身に付ける
+###  2.1. <a name='uChapter3u'></a><u>Chapter3 数値や文字列を扱う</u>
 <br>
 
 - キーワード
@@ -38,7 +59,7 @@ Dim ClientName As String
 <br>
 
 
-### <u>Chapter4 条件によって処理を変える</u>
+###  2.2. <a name='uChapter4u'></a><u>Chapter4 条件によって処理を変える</u>
 
 - AndAlso 演算子と OrElse 演算子
   AldAlso 演算では、前に指定した式が False なら後ろの式を評価せずに、False を返す.
@@ -54,7 +75,7 @@ End If
 ```
 <br>
 
-### <u>Chapter5 処理を繰り返す</u>
+###  2.3. <a name='uChapter5u'></a><u>Chapter5 処理を繰り返す</u>
 
 - Until型とWhile型のDo...Loopステートメント
 
@@ -130,7 +151,7 @@ Next
 ```
 <br>
 
-### <u>Chapter6 配列を利用する</u>
+###  2.4. <a name='uChapter6u'></a><u>Chapter6 配列を利用する</u>
 
 - 配列の宣言
 ```
@@ -160,7 +181,7 @@ Debug.Write(y(1).ToString("F1")) '1.0と出力される
 ```
 <br>
 
-### <u>Chapter7 プロシージャを使ってコードをまとめる</u>
+###  2.5. <a name='uChapter7u'></a><u>Chapter7 プロシージャを使ってコードをまとめる</u>
 
 - SubプロシージャとFunctionプロシージャ
 
@@ -197,7 +218,7 @@ End Function
 プロシージャの引数の定義時にByVal/ByRefを付ける事で値渡しと参照渡しを指定
 
 ```
-'arg1,arg2は値がコピーされ、呼び出し側の引数を変える事はないが、
+'arg1,arg2は値がコピーされ、呼び出し側の引数の値を変える事はないが、
 'ansを変更することで、呼び出し元のansも値を変更できる
 Sub Multiple (ByVal arg1, ByVal arg2, ByRef ans)
 
@@ -209,7 +230,84 @@ ByRefを指定すると参照型の変数の参照が渡される.
 
 - プロシージャの多重定義
 
+引数の数や引数の型が異なれば、同名の関数を定義することができる.
+```
+Sub hoge(huga As String)
+End Sub
+
+Sub hoge(huga As Integer)
+End Sub
+
+Sub hoge(huga As Integer, piyo As Integer)
+End Sub
+
+Dim str As String
+Dim num1, num2 As Integer
+
+'1つめがコール
+hoege(str)
+'2つめがコール
+hoege(num1)
+'3つめがコール
+hoege(num1, num2)
+```
+
+- 省略可能な引数を定義する
+
+Optionalというキーワードを用いて省略可能な引数を指定する事ができる.
+ただし、Optionalを付けて定義した引数には規定値を指定しておく必要があり、
+Optionalを指定した引数移行の引数は全て省略可能である必要がある.
+```
+'piyoは省略可能で、規定値は0.
+Sub hoge(hoge As Integer, Optional piyo As Integer = 0)
+End Sub
+```
+
+- 名前付き引数を指定して呼び出す
+
+省略できる引数がたくさんある場合、「,」で見づらくなることがあるが、
+指定したい引数のみを「引数名:=値」の形式で書く事ができる
+
+```
+Sub hoge(huga As Integer, Optional piyo1 As Integer, piyo2 As Integer, 
+        piyo3 AS Integer)
+End Sub
+
+'指定したいOptionalの引数のみを指定して呼び出し
+hoge (huga := 3, piyo2 :=5)
+```
+
+- タプルを利用して複数の値を返す
+
+タプルという機能を利用するFunctionプロシージャの戻り値を複数にする事ができる.
+タプルとは複数の値をひとまとめにしたもので以下の様に使用する.
+```
+Dim member As (Integer, String) 'タプルの宣言
+member = (3, "sato")            'タプルへの代入
+member.item1 = 5                '要素ごとの代入
+member.item2 = "tanaka"         '要素ごとの代入
+
+Dim member As (number As Integer, name As String) '要素に名前を付けてタプルを宣言
+member.number = 8
+member.name ="suzuki"
+```
+上のタプルを用いてFunctionプロシージャの返し値を複数にする.
+
+```
+'返し値をタプルで宣言する
+Function Hoge(huga As Integer) As (piyo1 As Integer, piyo2 As Integer)
+  
+  '処理
+
+  Return (piyo1,piyo2)
+End Function
+```
+
+<br>
+
+###  2.6. <a name='uChapter8u'></a><u>Chapter8 クラスを利用する</u>
+
 
 
 ---
-## Part3 本格的なプログラミングにチャレンジする
+##  3. <a name='Part3'></a>Part3 本格的なプログラミングにチャレンジする
