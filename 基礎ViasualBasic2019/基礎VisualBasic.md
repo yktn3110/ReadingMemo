@@ -12,13 +12,6 @@
 	* 2.6. [<u>Chapter8 クラスを利用する</u>](#uChapter8u)
 * 3. [Part3 本格的なプログラミングにチャレンジする](#Part3)
 
-<!-- vscode-markdown-toc-config
-	numbering=true
-	autoSave=true
-	/vscode-markdown-toc-config -->
-<!-- /vscode-markdown-toc -->
-
-
 
 ---
 ##  1. <a name='Part1VisualBasic'></a>Part1 はじめての VisualBasic プログラミング
@@ -338,7 +331,179 @@ btnOption.Text = "オプション(&O)"      'Textプロパティを設定する
 btnOption.Parent = Me                  '親コントロールをMe(現在のフォーム)とする
 ```
 
+- クラスの定義
 
+クラスは以下のように定義する.
+```
+'必要に応じてPublicまたはPrivateを定義する
+Public Class Person
+End Class
+```
+
+- プロパティの定義
+
+プロパティの実際の値を入れておくための変数はPrivateで宣言し、Get/SetプロシージャをPublicで定義する事で、外部より値を取得/変更する際に、不正な操作かをチェックする事ができる.
+(下記のコードではその様な操作は特に記述していない.)
+また、PropertyプロシージャにReadOnly/WriteOnlyを指定する事で読み出し/書き込み専用のプロパティとする事ができる.
+
+```
+Public Class Person
+  'プロパティの値を記憶しておく為の変数の宣言
+  Private mHeight As Double
+  Private mHWeight as Double
+  Private mAddress As String
+  Private mLastUpdate As String
+
+  'Propertyプロシージャを定義する
+  Public property Height() As Double
+    
+    'プロパティの値を返す
+    Get
+      Return mHeight
+    End Get
+
+    'プロパティの値を設定する
+    Set(Value As Double)
+      mHeight = value
+    End Set
+
+  End property
+
+  '読み出し専用のプロシージャ
+  Public ReadOnly Property Address() As String
+    
+    'プロパティの値を返す
+    Get
+      Return mAddress
+    End Get
+
+    'Setステートメントは記述不可
+
+  End property
+  
+  '書き込み専用のプロシージャ
+  Public WriteOnly property UpdateDate() As String
+
+    'Getステートメントは記述不可
+
+    'プロパティの値を設定する
+    Set(Date As String)
+      mLastUpdate = Date
+    End Set
+
+End Class
+```
+
+- メソッドを定義する
+
+メソッドはクラス内のSubプロシージャ、Functionプロシージャを指す.
+```
+Public Class Person
+  'プロパティの値を記憶しておく為の変数の宣言
+  Private mHeight As Double
+  Private mHWeight as Double
+
+  '・・・・・・・・・・・・・
+  '・・・・・・・・・・・・・
+
+    'プロパティの値を設定する
+    Set(Date As String)
+      mLastUpdate = Date
+    End Set
+  
+  'メソッドを定義する
+  Public Function GetBmi() As  Double
+    Return mWeight / (mHeight / 100) ^ 2
+  End Function
+
+End Class
+```
+因みに上記の例では値を単純に返しているだけなので、ReadOnlyのプロパティとして
+定義しても可.
+
+- 定義したクラスの利用
+
+上で記述したPersonクラスのオブジェクト生成.
+```
+Sub ShowBmi()
+  Dim aPerson As Person = New Person()
+
+  aPerson.Height = 170
+  aPerson.Weight = 64
+  MessageBox.show(aPerson.GetBmi().ToString("F2"))
+
+End Sub
+```
+
+- 共有メンバーの定義
+
+共有メソッドとするにはSharedというキーワードをメソッドの定義の最初に指定する.
+```
+Public Class Person
+  ・・・
+  ・・・
+  Public Shared Function GetBmi(Height As Double, Weight As Double) As Double
+    Return Weight / (Height / 100) ^ 2
+  End Function
+```
+上記のように定地する事でオブジェクトを作成することなく、メソッドを使用する事ができる.
+因みに、共有されていないメンバーをインスタンスメンバーと呼ぶ.
+
+- クラスを継承して派生クラスを定義
+
+作成済のPersonクラスを継承してMaleクラスを定義する.
+Maleクラスのオブジェクトをさくせいする事で基本クラスのPersonのプロパティ、メソッドが使用できる.
+
+```
+Public Class Male
+  Inherits Person
+End Class
+```
+ただし、基本クラスでPrivateで宣言された変数やプロパティ、メソッドは派生クラスで使用できない.
+また、基本クラスと派生クラスのみから利用できるメンバを定義したい場合は、基本クラスでの宣言時にProtectedを指定する.
+```
+Public Class Person
+  Protected mHeight As Double
+  ・・・
+  ・・・
+```
+
+- メソッドのオーバーライド
+
+子クラスでは基本クラスで定義済のメソッドの処理を変更したい場合、メソッドの定義しなおしが可能.
+これをオーバーライドという.
+オーバーライドしたい場合同じ名前のメソッドを派生クラスに書き、メソッド定義にOverridesというキーワードを付けておく.
+ただし、基本クラスに書かれている同じな目のメソッドにはOverridableというキーワードを付けておく必要がある.
+```
+Public Class Child
+  Inherits Person
+  Public Overrides Function GerBmi() As Double
+    ・・・
+    ・・・
+```
+
+- インターフェースを利用する
+
+複数のクラスで共通に使用されるような機能を実装する場合はインターフェイスを定義する.
+インターフェイスを定義するにはInterfaceキーワードを使う.
+インターフェイスでは、メソッドの定義のみを書き、メソッドの中身は書かず、具体的な処理はインターフェースを利用するクラスの方で書く.
+```
+Public Interface ISing
+  Sub Sing(SongName As String)
+End Interface
+```
+インターフェースを利用するにはクラス定義の後に「Implements インターフェース名」と書き、インターフェイスで定義されているメソッドの内容を書く.
+メソッド名の後にもImplementsキーワードと「インターフェイス名.メソッド名」を書く必要がある.
+```
+Public Class Male
+  Inherits Person
+  Implements ISing
+  ・・・
+  ・・・
+  Public Sub Sing(value As String) Implements ISing.Sing
+    ・・・
+  End Sub
+```
 
 ---
 ##  3. <a name='Part3'></a>Part3 本格的なプログラミングにチャレンジする
